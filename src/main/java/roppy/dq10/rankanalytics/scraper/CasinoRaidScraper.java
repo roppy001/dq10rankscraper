@@ -12,6 +12,7 @@ import java.util.List;
 
 public class CasinoRaidScraper implements Scraper {
     private static final int PAGE_NUMBER = 5;
+    private static final int [] SUBRACE_NUMBER = {1, 2, 3, 5};
 
     @Override
     public List<List<RankItem>> scrape(int round, int subraceNumber) throws IOException, ScrapingException {
@@ -27,7 +28,7 @@ public class CasinoRaidScraper implements Scraper {
 
             for(int page = 0; page < PAGE_NUMBER;page++) {
 
-                String url = String.format("https://hiroba.dqx.jp/sc/worldRanking/casinoRaid/%d/%d/page/%d",subraceIndex + 1,round ,page);
+                String url = String.format("https://hiroba.dqx.jp/sc/worldRanking/casinoRaid/%d/%d/page/%d",SUBRACE_NUMBER[subraceIndex],round ,page);
 
                 Document document = Jsoup.connect(url).get();
                 Elements rankers = document.select("tr.firstrank,tr.secondrank,tr.thirdrank,tr.rank");
