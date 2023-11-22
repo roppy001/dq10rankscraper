@@ -73,6 +73,12 @@ public class RankScraperMain implements RequestHandler<HandlerInput,Object> {
 
             List<List<RankItem>> list = scraper.scrape(round, raceConfig.getSubraceNumber());
 
+            for(List<RankItem> elm : list) {
+                if(elm.isEmpty()) {
+                    throw new ScrapingException("Scraped data is empty.");
+                }
+            }
+
             S3Uploader uploader = S3Uploader.getInstance();
             if (uploader.compareLatest(list, raceConfig.getStringObjKeyPrefix(), round)) {
                 throw new ScrapingException("Scraped data is the latest one.");
