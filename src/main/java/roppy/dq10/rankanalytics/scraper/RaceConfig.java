@@ -14,6 +14,7 @@ public enum RaceConfig {
 //    COLOSSEUM("colosseum","roppy.dq10.rankanalytics.scraper.ColosseumScraper","colosseum",1),
     DAIFUGO("daifugo","roppy.dq10.rankanalytics.scraper.DaifugoScraper","daifugo",1,UpdateTimeConfig.ONE_DAY),
     DAIFUGO_MATCH("daifugom","roppy.dq10.rankanalytics.scraper.DaifugoMatchScraper","daifugom",1,UpdateTimeConfig.ONE_DAY),
+    DAIFUGO_MATCH2("daifugom2","roppy.dq10.rankanalytics.scraper.DaifugoMatchScraper","daifugom",1,UpdateTimeConfig.EIGHT_HOURS),
     FISHING_CONTEST_1("fishing1","roppy.dq10.rankanalytics.scraper.FishingContestScraper","fishing",1,UpdateTimeConfig.EIGHT_HOURS),
     FISHING_CONTEST_2("fishing2","roppy.dq10.rankanalytics.scraper.FishingContestScraper","fishing",2,UpdateTimeConfig.EIGHT_HOURS);
 

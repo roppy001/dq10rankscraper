@@ -16,7 +16,7 @@ public class CasinoRaidScraper implements Scraper {
 
     @Override
     public List<List<RankItem>> scrape(int round, int subraceNumber) throws IOException, ScrapingException {
-        if(subraceNumber != 3){
+        if(subraceNumber != 3 && subraceNumber != 4){
             throw new ScrapingException("Illegal subrace number.");
         }
 
