@@ -52,8 +52,8 @@ Lambda invocation (HandlerInput: scraperKey + round)
 | `trinity` | バトルトリニティ | 6 | 8時間ごと |
 | `casinoraid` | カジノレイド | 4 | 8時間ごと |
 | `pencil` | バトルえんぴつ | 1 | 8時間ごと |
-| `daifugo` | だいふごう | 1 | 日次 |
-| `daifugom` | だいふごうマッチ | 1 | 8時間ごと |
+| `daifugo` | 大富豪段位戦 | 1 | 日次 |
+| `daifugom` | 大富豪決定戦 | 1 | 8時間ごと |
 | `fishing` | 釣り大会 | 2 | 8時間ごと |
 
 ### Key Classes
