@@ -1,13 +1,14 @@
 package roppy.dq10.rankanalytics.scraper;
 
-import com.amazonaws.SdkClientException;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.ListObjectsV2Request;
-import com.amazonaws.services.s3.model.ListObjectsV2Result;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import software.amazon.awssdk.core.exception.SdkException;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Object;
 import roppy.dq10.rankanalytics.scraper.dto.RankItem;
 
 import java.io.BufferedReader;
@@ -35,26 +36,27 @@ public class S3Uploader {
 
             String stringObjKeySearchKey = String.format("%s/%d/", prefix, round);
 
-            AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-                    .withRegion(Regions.AP_NORTHEAST_1)
+            S3Client s3Client = S3Client.builder()
+                    .region(Region.AP_NORTHEAST_1)
                     .build();
 
-            ListObjectsV2Request req = new ListObjectsV2Request()
-                    .withBucketName(BUCKET_NAME)
-                    .withPrefix(stringObjKeySearchKey)
-                    .withMaxKeys(MAX_KEY_NUMBER);
-            ListObjectsV2Result result;
+            ListObjectsV2Request req = ListObjectsV2Request.builder()
+                    .bucket(BUCKET_NAME)
+                    .prefix(stringObjKeySearchKey)
+                    .maxKeys(MAX_KEY_NUMBER)
+                    .build();
+            ListObjectsV2Response result;
             List<String> keyList = new ArrayList<>();
 
             do {
                 result = s3Client.listObjectsV2(req);
 
-                for (S3ObjectSummary objectSummary : result.getObjectSummaries()) {
-                    keyList.add(objectSummary.getKey());
+                for (S3Object objectSummary : result.contents()) {
+                    keyList.add(objectSummary.key());
                 }
 
-                String token = result.getNextContinuationToken();
-                req.setContinuationToken(token);
+                String token = result.nextContinuationToken();
+                req = req.toBuilder().continuationToken(token).build();
             } while (result.isTruncated());
 
             if(keyList.isEmpty()){
@@ -66,11 +68,12 @@ public class S3Uploader {
             String latestKey = keyList.get(keyList.size() - 1);
 
             // 最新のデータを読み込む
-            S3Object latestObject = s3Client.getObject(BUCKET_NAME,latestKey);
-
             List<List<RankItem>> latestListList = new ArrayList<>();
 
-            try(InputStream is =  latestObject.getObjectContent();
+            try(InputStream is = s3Client.getObject(GetObjectRequest.builder()
+                        .bucket(BUCKET_NAME)
+                        .key(latestKey)
+                        .build());
                 InputStreamReader isr = new InputStreamReader(is);
                 BufferedReader br = new BufferedReader(isr)){
 
@@ -113,8 +116,6 @@ public class S3Uploader {
                     latestListList.get(subraceIndex).add(item);
                 }
 
-
-
             }catch (NumberFormatException ioe) {
                 return false;
             }catch (IOException ioe) {
@@ -146,7 +147,7 @@ public class S3Uploader {
             }
 
 
-        } catch (SdkClientException e) {
+        } catch (SdkException e) {
             throw new S3Exception(e);
         }
 
@@ -190,13 +191,19 @@ public class S3Uploader {
                 }
             }
 
-            AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
-                    .withRegion(Regions.AP_NORTHEAST_1)
+            S3Client s3Client = S3Client.builder()
+                    .region(Region.AP_NORTHEAST_1)
                     .build();
 
-            s3Client.putObject(BUCKET_NAME, stringObjKeyName,sb.toString());
+            s3Client.putObject(
+                PutObjectRequest.builder()
+                    .bucket(BUCKET_NAME)
+                    .key(stringObjKeyName)
+                    .build(),
+                RequestBody.fromString(sb.toString())
+            );
 
-        } catch (SdkClientException e) {
+        } catch (SdkException e) {
             throw new S3Exception(e);
         }
     }
