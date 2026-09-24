@@ -69,7 +69,7 @@ public class RankScraperMain implements RequestHandler<HandlerInput,Object> {
                 throw new RuntimeException("Unknown scraperkey:" + input.getScraperKey());
             }
 
-            Scraper scraper = (Scraper) Class.forName(raceConfig.getClassName()).newInstance();
+            Scraper scraper = (Scraper) Class.forName(raceConfig.getClassName()).getDeclaredConstructor().newInstance();
 
             List<List<RankItem>> list = scraper.scrape(round, raceConfig.getSubraceNumber());
 

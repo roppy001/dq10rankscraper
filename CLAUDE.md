@@ -70,8 +70,9 @@ Lambda invocation (HandlerInput: scraperKey + round)
 
 ## Dependencies
 
-- Java 8, Gradle 5.6.4
+- Java 21, Gradle 8.10.2
 - `org.jsoup:jsoup:1.12.1` — HTML パース
-- `com.amazonaws:aws-java-sdk` — Lambda / S3
-- `org.projectlombok:lombok:1.16.10` — `@Data` / `@Getter` / `@AllArgsConstructor`
+- `com.amazonaws:aws-lambda-java-core` — Lambda ハンドラー
+- `software.amazon.awssdk:s3` — S3（AWS SDK for Java v2）
+- `org.projectlombok:lombok:1.18.34` — `@Data` / `@Getter` / `@AllArgsConstructor`
 - `junit:junit:4.12` — テスト
